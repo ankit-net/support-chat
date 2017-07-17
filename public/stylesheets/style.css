@@ -1,0 +1,135 @@
+/*header css starts*/
+header{
+  background-color: #c0c0c0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+header .navbar{
+  margin-bottom: 0px;
+}
+
+.navbar-nav ul li a{
+  background: #D9DEE4;
+  color: #515356!important;
+}
+
+.user-profile img{
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  margin-right: 10px;
+  max-width: none;
+}
+
+.navbar-nav .open .dropdown-menu{
+  position: absolute;
+  background: #fff;
+  margin-top: 0;
+  border: 1px solid #D9DEE4;
+  right: 0;
+  left: auto;
+  width: 220px;
+}
+
+.navbar-nav .open .dropdown-menu li a{
+  width: 100%;
+  padding: 12px 20px;
+  color: #5A738E;
+  display: block;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  white-space: nowrap;
+}
+
+/*header css ends*/
+
+body {
+  color: #73879C;
+  background: #2A3F54;
+  font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.471;
+}
+
+body .main{
+  padding-top: 70px;
+}
+
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-55, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+    position: relative;
+    min-height: 1px;
+    float: left;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+a {
+  color: #00B7FF;
+}
+
+img { 
+  width: 140px;
+  height: 140px;
+}
+
+.fa-sign-out { 
+  float: right; 
+}
+
+.left-col{
+  min-height: 100%;
+  padding: 0;
+  position: absolute;
+  display: flex;
+  z-index: 1;
+  background: #2A3F54;
+}
+
+.right-col{
+  min-height: 704px;
+  background: #F7F7F7;
+  float: right;
+}
+
+.navigation-views{
+  width: 100%;
+  padding: 10px;
+}
+
+.navigation-views li{
+  font-size: 16px;
+  font-weight: bold;
+  display: inline-block;
+  padding: 0.5em 1.5em;
+  cursor: pointer;
+  color: #fff;
+  width: 100%;
+}
+
+.navigation-views li.selected{
+  background-color: #444 !important;
+  color: white;
+  text-shadow: none;
+  border-right-color: #aaa;
+  border-left: none;
+  box-shadow: inset 1px 2px 6px #070707;
+}
+
+
+}
+
+/*footer css starts*/
+
+footer{
+  display: inline-block;
+  width: 100%;
+  margin-top: 5%;
+  margin-bottom: 2%;
+}
+
+/*footer css ends*/

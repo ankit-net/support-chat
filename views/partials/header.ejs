@@ -1,0 +1,31 @@
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>
+                Support Chat
+            </a>
+        </div>
+
+        <ul class="nav navbar-nav" style="display: none;">
+            <li><a href="/">Home</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li class="open1">
+                <% if (this.user && user.email != null) { %>
+                    <a class="user-profile"><img src="https://avatars.io/gravatar/<%= user.email %>" class="img-circle"><%= user.email %><span class=" fa fa-angle-down"></span></a>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a>Profile</a></li>
+                        <li><a>Settings</a></li>
+                        <li><a>Help</a></li>
+                        <li><a>Logout</a></li>
+                    </ul>
+                <% } %>
+                       
+            </li>
+        </ul>
+
+    </div>
+</nav>

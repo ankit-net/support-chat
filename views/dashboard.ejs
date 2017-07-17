@@ -1,0 +1,29 @@
+<% include partials/head %>  
+  <body>
+    <script src="/javascripts/knockout-3.4.2.debug.js"></script>
+    <script src="/javascripts/jquery-3.2.1.js"></script>
+    <header>
+        <% include partials/header %>
+    </header>
+    <div class="container-fluid main">
+      <div class="col-md-2 left-col">
+        <div>
+          <ul class="navigation-views" data-bind="foreach: views">
+            <li data-bind="text: $data, 
+              css: { selected: $data == $root.chosenViewId() },
+              click: $root.gotoView"></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-10 right-col">
+        <div class="text-center">
+          
+        </div>
+      </div>
+    </div>
+    <footer>
+        <% include partials/footer %>
+    </footer>
+    <script src="/javascripts/index.js"></script>
+  </body>
+</html>

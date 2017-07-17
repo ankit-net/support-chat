@@ -1,0 +1,8 @@
+# Node Dependencies
+node_modules
+
+#bin folder
+bin
+
+# Logs
+debug.log
