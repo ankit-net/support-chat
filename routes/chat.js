@@ -1,7 +1,8 @@
 var express = require('express');  
 var passport = require('passport');  
 const chatController = require('../controllers/chat'),
-    authController = require('../controllers/authentication');
+    authController = require('../controllers/authentication'),
+    Message = require('../models/message');
 
 const chatRoutes = express.Router();
 
@@ -14,7 +15,7 @@ chatRoutes.get('/:conversationId', authController.userAuthenticated, chatControl
 chatRoutes.post('/:conversationId', authController.userAuthenticated, chatController.sendReply);
 
 // Start new conversation
-chatRoutes.post('/new/:recipient', authController.userAuthenticated, chatController.newConversation);
+// chatRoutes.post('/new/:recipient', authController.userAuthenticated, chatController.newConversation);
 
 module.exports = chatRoutes;
 

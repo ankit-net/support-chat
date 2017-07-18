@@ -14,7 +14,7 @@
 
         <ul class="nav navbar-nav navbar-right">
             <li class="open1">
-                <% if (this.user && user.email != null) { %>
+                <% if (user && user.email != null) { %>
                     <a class="user-profile"><img src="https://avatars.io/gravatar/<%= user.email %>" class="img-circle"><%= user.email %><span class=" fa fa-angle-down"></span></a>
                     <ul class="dropdown-menu pull-right">
                         <li><a>Profile</a></li>

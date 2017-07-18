@@ -55,7 +55,7 @@ exports.createCustomerAndStartConversation = function(req, res, next){
                         if(err){
                             done(err);
                         }
-                        res.status(200).json({message: 'Conversation started!', conversationId: newConversation._id});
+                        res.status(200).json({message: 'Conversation started!', customer: customer._id, conversationId: newConversation._id});
                     });
                 });
         }
@@ -63,5 +63,19 @@ exports.createCustomerAndStartConversation = function(req, res, next){
     function(err){
         res.send({error: err});
         return next(err);
+    });
+};
+
+exports.sendReply = function(req, res, next) {  
+    const reply = new Message({
+        conversation: req.params.conversationId,
+        body: req.body.composedMessage,
+        author: {kind: 'Custmer', item: req.body.customerId} 
+    });
+    reply.save(function(err, sentReply) {
+        if (err) {
+            done(err);
+        }
+        res.status(200).json({ message: 'Reply successfully sent!', reply: sentReply._id});
     });
 };

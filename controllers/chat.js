@@ -1,53 +1,58 @@
 const Conversation = require('../models/conversation'),
     Message = require('../models/message'),
-    User = require('../models/user');
+    User = require('../models/user'),
+    Customer = require('../models/customer'),
+    waterfall = require('async-waterfall');
 
+//working
 exports.getConversations = function(req, res, next){
-    Conversation.find({participants: req.user._id})
-        .select('_id')
-        .exec(function(err, conversations){
-            if(err){
-                res.send({error: err});
-                return next(err);
-            }
-            if(conversations.length === 0){
-                return res.status(200).json({
-                    conversations: []
-                });
-            }
-
-            let fullConversations = [];
-            conversations.forEach(function(conversation){
-                Message.find({'conversationId': conversation._id})
-                    .sort('-createdAt')
-                    .limit(1)
-                    .populate({
-                        path: "author",
-                        select: "profile.firstName profile.lastName"
-                    })
-                    .exec(function(err, message){
-                        if(err){
-                            res.send({error: err});
-                            return next(err);
-                        }
-                        fullConversations.push(message);
-                        if(fullConversations.length === conversations.length){
-                            return res.status(200).json({
-                                conversations: fullConversations
-                            });
-                        }
-                    });
+    //remember to check for authenticated user before this
+    //find all conversations for the user
+    Conversation.find({$or:[{$and:[{participant: req.user._id},{status:'ongoing'}]}, {status:'open'}]})
+    .select('_id')
+    .populate('customer participant')
+    .exec(function(err, conversations){
+        //if error
+        if(err){
+            res.send({error: err});
+            return next(err);
+        }
+        console.log(conversations);
+        //if no conversations found
+        if(conversations.length === 0){
+            return res.status(200).json({
+                conversations: []
+            });
+        }
+        let fullConversationRes = [];
+        conversations.forEach(function(conversation){
+            Message.find({'conversation': conversation._id})
+            .sort('-createdAt')
+            .limit(1)
+            .populate('author.item conversation')
+            .exec(function(err, message){
+                if(err){
+                    res.send({error: err});
+                    return next(err);
+                }
+                fullConversationRes.push(message);
             });
         });
+        return res.status(200).json({
+            conversations: fullConversationRes
+        });
+    });
 };
 
+//working
 exports.getConversation = function(req, res, next){
-    Message.find({conversationId: req.params.conversationId})
-        .select('createdAt body author')
+    Message.find({conversation: req.params.conversationId})
+        .select('createdAt body author conversation')
         .sort('-createdAt')
+        .populate('author.item')
         .populate({
-            path: 'author',
-            select: 'profile.firstName profile.lastName'
+            path: 'conversation',
+            populate: ('customer participant')
         })
         .exec(function(err, messages){
             if(err){
@@ -56,6 +61,47 @@ exports.getConversation = function(req, res, next){
             }
             res.status(200).json({conversation: messages});
         });
+};
+
+//working
+exports.sendReply = function(req, res, next) {  
+    waterfall([
+        function(done){
+            Conversation.findOne({_id: req.params.conversationId}, function(err, conversation){
+                if(err){
+                    done(err);
+                }
+                if(conversation && conversation.status === 'open'){
+                    conversation.status = 'ongoing';
+                    conversation.participant = req.user._id;
+                    conversation.save(function(err, savedConversation){
+                        if(err){
+                            done(err);
+                        }
+                        done(err, savedConversation);
+                    });   
+                }
+                done(err, conversation);
+            });
+        },
+        function(conversation, done){
+            const reply = new Message({
+                conversation: req.params.conversationId,
+                body: req.body.composedMessage,
+                author: {kind: 'User', item: req.user._id} 
+            });
+            reply.save(function(err, sentReply) {
+                if (err) {
+                    done(err);
+                }
+                res.status(200).json({ message: 'Reply successfully sent!', reply: sentReply._id});
+            });
+        }
+    ], function(err){
+        console.log(err.toString);
+        res.send({error: err});
+        return next(err);
+    });
 };
 
 exports.newConversation = function(req, res, next){
@@ -92,24 +138,6 @@ exports.newConversation = function(req, res, next){
             res.status(200).json({message: 'Conversation started!', conversationId: conversation._id});
         });
     });
-};
-
-exports.sendReply = function(req, res, next) {  
-  const reply = new Message({
-    conversationId: req.params.conversationId,
-    body: req.body.composedMessage,
-    author: req.user._id
-  });
-
-  reply.save(function(err, sentReply) {
-    if (err) {
-      res.send({ error: err });
-      return next(err);
-    }
-
-    res.status(200).json({ message: 'Reply successfully sent!' });
-    return(next);
-  });
 };
 
 // DELETE Route to Delete Conversation

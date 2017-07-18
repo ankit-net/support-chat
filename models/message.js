@@ -2,8 +2,9 @@ const mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 const MessageSchema = new Schema({
-    conversationId:{
+    conversation:{
         type: Schema.Types.ObjectId,
+        ref: 'Conversation',
         required: true
     },
     body:{
@@ -11,8 +12,8 @@ const MessageSchema = new Schema({
         required: true
     },
     author:{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
+        kind: String,
+        item: {type: Schema.Types.ObjectId, refPath: 'author.kind'}
     }
 },
 {
