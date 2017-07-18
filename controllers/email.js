@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer'),
         service: 'SendGrid',
         auth: {
             user: 'niraj.kumar.psq',
-            pass: 'vfr4VFR$'
+            pass: '*********'
         }
     };
 
