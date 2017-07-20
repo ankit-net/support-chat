@@ -31,8 +31,8 @@ app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-const io = require('socket.io').listen(server);
-socketEvents(io);
+// const io = require('socket.io').listen(server);
+// socketEvents(io);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

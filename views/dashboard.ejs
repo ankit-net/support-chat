@@ -6,7 +6,7 @@
         <% include partials/header %>
     </header>
     <div class="container-fluid main">
-      <div class="col-md-2 left-col">
+      <div id="tab-view" class="col-md-2 left-col">
         <div>
           <ul class="navigation-views" data-bind="foreach: views">
             <li data-bind="text: $data, 
@@ -16,8 +16,19 @@
         </div>
       </div>
       <div class="col-md-10 right-col">
-        <div class="text-center">
-          
+        <div id="conversations" class="canvas" data-bind="visible: chosenViewId() === 'Conversations'">
+          <div class="conversations-view"  data-bind="with: conversationsData">
+
+          </div>
+          <div class="messages-view"  data-bind="with: messagesData">
+
+          </div>
+        </div>
+        <div id="history" class="canvas" data-bind="visible: chosenViewId() === 'History'">
+        </div>
+        <div id="operators" class="canvas" data-bind="visible: chosenViewId() === 'Operators'">
+        </div>
+        <div id="prepared-messages" class="canvas" data-bind="visible: chosenViewId() === 'Prepared Messages'">
         </div>
       </div>
     </div>

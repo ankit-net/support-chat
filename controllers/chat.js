@@ -4,43 +4,40 @@ const Conversation = require('../models/conversation'),
     Customer = require('../models/customer'),
     waterfall = require('async-waterfall');
 
+var mongoose = require('mongoose');
+// mongoose.Promise = global.Promise;
+mongoose.Promise = require('bluebird');
+
 //working
 exports.getConversations = function(req, res, next){
-    //remember to check for authenticated user before this
-    //find all conversations for the user
+    // //remember to check for authenticated user before this
+    // //find all conversations for the user
     Conversation.find({$or:[{$and:[{participant: req.user._id},{status:'ongoing'}]}, {status:'open'}]})
     .select('_id')
     .populate('customer participant')
-    .exec(function(err, conversations){
-        //if error
-        if(err){
-            res.send({error: err});
-            return next(err);
-        }
-        console.log(conversations);
+    .then(function(conversations){
         //if no conversations found
         if(conversations.length === 0){
             return res.status(200).json({
                 conversations: []
             });
         }
+
         let fullConversationRes = [];
         conversations.forEach(function(conversation){
-            Message.find({'conversation': conversation._id})
-            .sort('-createdAt')
-            .limit(1)
-            .populate('author.item conversation')
-            .exec(function(err, message){
-                if(err){
-                    res.send({error: err});
-                    return next(err);
-                }
-                fullConversationRes.push(message);
-            });
+            fullConversationRes.push(
+                Message.find({'conversation': conversation._id})
+                .sort('-createdAt')
+                .limit(1)
+                .populate('author.item conversation')
+            );
         });
-        return res.status(200).json({
-            conversations: fullConversationRes
-        });
+
+        return Promise.all(fullConversationRes);
+    }).then(function(listOfConversations) {
+        res.status(200).json({conversations:listOfConversations}).send();
+    }).catch(function(err) {
+        res.status(501).send({error: err}).send();
     });
 };
 
@@ -94,7 +91,7 @@ exports.sendReply = function(req, res, next) {
                 if (err) {
                     done(err);
                 }
-                res.status(200).json({ message: 'Reply successfully sent!', reply: sentReply._id});
+                res.status(200).json({ message: 'Reply successfully sent!', reply: sentReply._id}).send();
             });
         }
     ], function(err){

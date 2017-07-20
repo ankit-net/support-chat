@@ -120,7 +120,26 @@ img {
   box-shadow: inset 1px 2px 6px #070707;
 }
 
+.canvas{
+  display: flex;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
+.conversations-view{
+  width: 25%;
+  height: 100%;
+  background-color: #123;
+}
+
+.messages-view{
+  width: 75%;
+  height: 100%;
+  background-color: #12a;
 }
 
 /*footer css starts*/

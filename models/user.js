@@ -26,7 +26,7 @@ var userSchema = mongoose.Schema({
     resetPasswordExpires: {type: Date}
 },
 {
-    timeStamps: true
+    timestamps: true
 });
 
 userSchema.pre('save', function(next){

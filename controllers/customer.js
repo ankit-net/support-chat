@@ -1,6 +1,7 @@
 const Customer = require('../models/customer'),
     Conversation = require('../models/conversation'),
-    waterfall = require('async-waterfall');
+    waterfall = require('async-waterfall'),
+    Message = require('../models/message');
 
 exports.createCustomerAndStartConversation = function(req, res, next){
     waterfall([
@@ -70,7 +71,7 @@ exports.sendReply = function(req, res, next) {
     const reply = new Message({
         conversation: req.params.conversationId,
         body: req.body.composedMessage,
-        author: {kind: 'Custmer', item: req.body.customerId} 
+        author: {kind: 'Customer', item: req.body.customerId} 
     });
     reply.save(function(err, sentReply) {
         if (err) {

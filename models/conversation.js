@@ -15,6 +15,9 @@ const ConversationSchema = new Schema({
         enum: ['open', 'ongoing', 'ended'],
         default: 'open'
     }
+},
+{
+    timestamps: true
 });
 
 module.exports = mongoose.model('Conversation', ConversationSchema);
