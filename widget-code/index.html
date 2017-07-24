@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Language" content="en-us" />
+        <title>WebChat</title>
+        <!--common file--->
+         <link href="css/style.css" rel="stylesheet" />
+        <link href="css/font-awesome.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="main">
+            <div id="chat-box" class="chat-box">
+                <div class="chat-box-login" data-bind="visible: chatViewVisible()">
+                    <div class="chat-header">
+                        <a href="#">
+                            <span class="chat-text">Chat with Us</span>
+                            <span class="chat-icon"><i class="fa fa-comments" aria-hidden="true"></i>
+                            </span>
+                        </a>     
+                    </div>
+                    <div class="chat-body" style="display:none;">
+                        <p class="heading">Please enter your name & email to start the chat</p>
+                        <div class="form-box">
+                            <form data-bind="submit: addCustomerInfo" action="#">
+                                <div class="form-group">
+                                    <input type="text" data-bind="value: customerName"  placeholder="Enter Your Name">
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" data-bind="value: customerEmail"  placeholder="Enter Your Email">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" data-bind="value: customerMobile" placeholder="Enter Your Mobile No">
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" name="option"><label>Option</label>
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" name="option"><label>Option</label>
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" name="option"><label>Option</label>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Chat Now" class="chatnow">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-box-inner" data-bind="visible: !chatViewVisible()" style="display:none;">
+                    <div class="chat-start">
+                        <div class="start-chat-header">
+                            <a href="#">
+                                <span class="chat-text">Chat</span>
+                                <span class="chat-icon"><i class="fa fa-comments" aria-hidden="true"></i>
+                                </span>
+                            </a>    
+                            <div class="toogle-menu">
+                                <i class="fa fa-bars" aria-hidden="true"></i>
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-volume-up" aria-hidden="true"></i>
+                                    Sound off</a></li>
+                                    <li><a href="#"><i class="fa fa-expand" aria-hidden="true"></i>
+                                    Wide mode</a></li>
+                                    <li><a href="#"><i class="fa fa-arrows-v" aria-hidden="true"></i>
+                                    Auto scroll</a></li>
+                                    <li><a href="#"><i class="fa fa-smile-o" aria-hidden="true"></i>
+                                    Emoji</a></li>
+                                    <li class="end-chat"><a href="#"><i class="fa fa-power-off" aria-hidden="true"></i>
+                                    End chat</a></li>
+                                </ul>
+                            </div>
+                        </div>     
+                        <div class="show-hide-chat">                
+                            <div class="start-chat-body" data-bind="with: messagesList">
+                                <div data-bind="foreach: conversation">
+                                    <div data-bind="css: $root.getClass(author.kind)">
+                                    <div class="name" data-bind="text: author.item.profile.firstName + ' ' + author.item.profile.lastName"></div>
+                                    <div class="msg" data-bind="text: body"></div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="send-chat">
+                                <div class="text-box">
+                                    <p>do you want to send chat on email</p>
+                                    <a href="#" class="yes">Yes</a>
+                                    <a href="#" class="no">No</a>
+                                </div>
+                                <div class="send-email" style="display:none">
+                                    <input type="email" placeholder="Enter your email">
+                                    <input type="submit" value="send">
+                                    <div class="success" style="display:none">
+                                        <p>Your chat is sent to your email succesful!</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-box">
+                                <input type="text" data-bind="textInput: messageToSend" placeholder="comment here">
+                                <a href="#" data-bind="click: sendButtonHandler">Send</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--------------Script file--------------->
+        <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="js/knockout-3.4.2.debug.js"></script>
+        <script type="text/javascript" src="js/socket.io.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+    </body>
+</html>

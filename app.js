@@ -12,6 +12,7 @@ var userRoutes = require('./routes/users');
 var chatRoutes = require('./routes/chat');
 var customerRoutes = require('./routes/customer');
 var port = process.env.port || 3000;
+var socketPort = 3001;
 
 var passport = require('passport');
 var mongoose = require('mongoose');
@@ -31,8 +32,8 @@ app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-// const io = require('socket.io').listen(server);
-// socketEvents(io);
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -53,6 +54,12 @@ require('./config/passport')(passport);
 app.use('/', routes);
 app.use('/users', userRoutes);
 app.use('/chat', chatRoutes);
+app.use('/customer', function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+  res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept");
+  next();
+});
 app.use('/customer', customerRoutes);
 
 // catch 404 and forward to error handler
@@ -71,4 +78,10 @@ app.use(function(err, req, res, next){
 });
 
 app.listen(port);
+
+http.listen(socketPort, function(){
+  console.log('listening for socket connections on *:3001');
+});
+socketEvents(io);
+
 module.exports = app;

@@ -5,7 +5,6 @@ const Conversation = require('../models/conversation'),
     waterfall = require('async-waterfall');
 
 var mongoose = require('mongoose');
-// mongoose.Promise = global.Promise;
 mongoose.Promise = require('bluebird');
 
 //working
@@ -14,7 +13,6 @@ exports.getConversations = function(req, res, next){
     // //find all conversations for the user
     Conversation.find({$or:[{$and:[{participant: req.user._id},{status:'ongoing'}]}, {status:'open'}]})
     .select('_id')
-    .populate('customer participant')
     .then(function(conversations){
         //if no conversations found
         if(conversations.length === 0){
@@ -26,18 +24,21 @@ exports.getConversations = function(req, res, next){
         let fullConversationRes = [];
         conversations.forEach(function(conversation){
             fullConversationRes.push(
-                Message.find({'conversation': conversation._id})
+                Message.findOne({'conversation': conversation._id})
                 .sort('-createdAt')
-                .limit(1)
-                .populate('author.item conversation')
+                .populate('author.item')
+                .populate({
+                    path: 'conversation',
+                    populate: {path: 'customer'}
+                })
             );
         });
 
         return Promise.all(fullConversationRes);
     }).then(function(listOfConversations) {
-        res.status(200).json({conversations:listOfConversations}).send();
-    }).catch(function(err) {
-        res.status(501).send({error: err}).send();
+        res.status(200).json({conversations:listOfConversations});
+    }, function(err) {
+        res.status(501).send(err);
     });
 };
 
@@ -53,8 +54,7 @@ exports.getConversation = function(req, res, next){
         })
         .exec(function(err, messages){
             if(err){
-                res.send({error: err});
-                return next(err);
+                res.status(501).send({error: err});
             }
             res.status(200).json({conversation: messages});
         });
@@ -66,14 +66,14 @@ exports.sendReply = function(req, res, next) {
         function(done){
             Conversation.findOne({_id: req.params.conversationId}, function(err, conversation){
                 if(err){
-                    done(err);
+                    return done(err);
                 }
                 if(conversation && conversation.status === 'open'){
                     conversation.status = 'ongoing';
                     conversation.participant = req.user._id;
                     conversation.save(function(err, savedConversation){
                         if(err){
-                            done(err);
+                            return done(err);
                         }
                         done(err, savedConversation);
                     });   
@@ -82,6 +82,7 @@ exports.sendReply = function(req, res, next) {
             });
         },
         function(conversation, done){
+            console.log(req.body);
             const reply = new Message({
                 conversation: req.params.conversationId,
                 body: req.body.composedMessage,
@@ -89,15 +90,14 @@ exports.sendReply = function(req, res, next) {
             });
             reply.save(function(err, sentReply) {
                 if (err) {
-                    done(err);
+                    return done(err);
                 }
-                res.status(200).json({ message: 'Reply successfully sent!', reply: sentReply._id}).send();
+                res.status(200).json({ message: 'Reply successfully sent!', reply: sentReply._id});
             });
         }
     ], function(err){
         console.log(err.toString);
-        res.send({error: err});
-        return next(err);
+        res.status(501).send({error: err});
     });
 };
 

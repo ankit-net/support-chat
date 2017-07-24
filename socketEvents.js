@@ -4,9 +4,9 @@ exports = module.exports = function(io) {
     //console.log('a user connected');
 
     // On conversation entry, join broadcast channel
-    socket.on('enter conversation', (conversation) => {
-      socket.join(conversation);
-      // console.log('joined ' + conversation);
+    socket.on('enter conversation', (data) => {
+      socket.join(data.conversationId);
+      console.log(data.userId + ' joined ' + data.conversationId);
     });
 
     socket.on('leave conversation', (conversation) => {
@@ -15,8 +15,14 @@ exports = module.exports = function(io) {
     })
 
     socket.on('new message', (conversation) => {
+      console.log('new message received in ' + conversation);
       io.sockets.in(conversation).emit('refresh messages', conversation);
-      });
+    });
+
+    // socket.emit('news', { hello: 'world' });
+    // socket.on('my other event', function (data) {
+    //   console.log(data);
+    // });
 
     socket.on('disconnect', () => {
       //console.log('user disconnected');

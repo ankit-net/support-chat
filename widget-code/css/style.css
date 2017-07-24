@@ -1,0 +1,99 @@
+*{
+	 box-sizing: border-box; -webkit-box-sizing:border-box; -moz-box-sizing:border-box;
+	 text-shadow: none;
+     transition: all 250ms ease 0s;
+    -webkit-transition: all 250ms ease 0s;
+     margin: 0;
+	 padding: 0;
+	
+	
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section, summary,div{display: block;}
+ul{list-style: none;}
+h1,h2,h3,h4,h5,h6,p{margin: 0;}
+
+a,a:focus,a:hover{text-decoration: none !important; outline:none !important}
+menu, ol, ul {padding: 0; margin: 0;}
+html{margin: 0; padding: 0; -webkit-font-smoothing: antialiased; height: 100%; width: 100%;}
+
+.fl{float: left;}
+.fr{float: right !important}
+
+body{
+  margin: 0; padding: 0;
+  overflow-x: hidden;
+  font-family: 'Verdana';
+  font-size:14;
+  height: 100%;
+  width: 100%;
+ }
+
+
+
+.main{width: 100%; height: 100%; float: left; position: relative;}
+.chat-box{max-width:360px; width:100%; position: fixed; right:14px; bottom: 0;}
+.chat-box .chat-header,.start-chat-header{width: 100%; padding: 3%; height: 42px; background: #DF314F; border-radius: 4px 4px 0 0;}
+.chat-box .chat-header .chat-text{float: left;}
+.chat-box .chat-header a,.start-chat-header a{color: #fff; font-weight: bold;}
+.chat-box .chat-header .chat-icon{float: right;}
+.chat-box .chat-header .chat-icon i{font-size: 20px; color: #fff;}
+.chat-box .chat-body{width: 100%; float: left; padding: 0 4%; background: #1ABB9C;}
+.chat-box .chat-body .heading{font-size: 12px; line-height:35px; font-weight: bold;}
+.chat-box .chat-body form{width:100%; float: left;}
+.chat-box .chat-body form .form-group{width:100%; float: left; margin-bottom:13px;}
+.chat-box .chat-body form .form-group input[type="text"],.chat-box .chat-body form .form-group input[type="email"],.chat-box .chat-body form .form-group input[type="submit"]{width:100%; padding: 3% 2%; background: #fff; border:1px solid #fff; font-weight: bold; border-radius: 3px;}
+.chat-box .chat-body form .form-group input[type="submit"]{cursor: pointer; background: #F09C22; border:1px solid #F09C22; color: #fff; font-size:14px;}
+.chat-box .form-box{width:100%; float: left; padding: 0 8%;}
+.chat-box .form-box .form-group label{font-size: 13px; margin-left: 5px;}
+.start-chat-header span.chat-text{float: left;}
+.start-chat-header span.chat-icon{float: right;}
+.chat-box-login{width:100%; float: left;}
+.start-chat-header{position: relative;}
+.start-chat-header .toogle-menu{position: absolute; right: 50px; top: 10px; color: #fff;}
+.start-chat-body{width: 100%; float: left; padding: 2% 3%; background:#1ABB9C; height: 332px; overflow:auto}
+.start-chat-body .user-chat{float: left; width: 70%; margin-bottom: 10px;}
+.start-chat-body .user-chat .name{float: left; margin-right: 10px;}
+.start-chat-body .user-chat .msg{float: left;}
+.start-chat-body .admin-chat{float: right; width: 70%;}
+.start-chat-body .admin-chat .name{float: left; margin-right: 10px;}
+.msg{border: 1px solid rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 5px 5px rgba(255, 255, 255, 0.4) inset, 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    clear: both;
+    color: #000;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    padding: 8px 30px;
+    position: relative;
+    background: #fff;
+}
+.msg:before{ border-color: transparent transparent #fffbf8;
+    border-image: none;
+    border-radius: 20px / 10px;
+    border-style: solid;
+    border-width: 8px;
+    bottom: 1px;
+    content: "";
+    display: block;
+    left: auto;
+    position: absolute;
+    right: -5px;}
+.toogle-menu i{font-size: 20px; cursor: pointer;}
+.comment-box{width:100%; float: left}
+.comment-box input[type="text"]{background: #fff; border: 2px solid #ddd;  float: left; font-size: 16px; padding: 3%; width: 76%;}
+.comment-box a{background: #df314f ; border: 2px solid #df314f;  float: left; font-size: 16px; padding: 3%; width: 24%; border-left: 0; text-align: center; color: #fff; font-weight: bold;}
+.show-hide-chat{width: 100%; float: left;}
+.toogle-menu ul{background: #ddd; min-width: 157px; padding: 7px; position: absolute; right: 0; border-radius: 4px; z-index: 99999; visibility: hidden;}
+.toogle-menu ul li{font-size: 13px; color: #000; margin-bottom: 5px;}
+.toogle-menu ul li i{font-size: 13px; width:18px; display: inline-block;}
+.toogle-menu ul li a{color: #000; font-weight: normal;}
+.send-chat{background: #ddd; height: 315px; padding: 122px 0; display: none; text-align: center;}
+.send-chat p{text-align: center; margin-bottom: 10px;}
+.chat-box-inner{width:100%; float: left;}
+.send-chat a{display: inline-block; padding: 5px 10px; background: #DF314F; color: #fff; border-radius: 4px;}
+.send-email input[type="email"]{display: inline-block; padding: 2% 3%; width: 200px; font-size: 15px; color: #000;}
+.send-email input[type="submit"]{background: #df314f; border: 2px solid #df314f; color: #fff;  cursor: pointer; font-weight: bold; margin: 0;
+    padding: 2%; text-transform: uppercase;}
+.success{width:100%; float: left; margin-top: 10px;}
+.success p{color:green; font-weight: bold;}

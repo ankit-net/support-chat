@@ -11,7 +11,8 @@
         <ul class="nav navbar-nav" style="display: none;">
             <li><a href="/">Home</a></li>
         </ul>
-
+        <input id="userEmail" type="hidden" value="<%= user.email %>"/>
+        <input id="userId" type="hidden" value="<%= user._id %>"/>
         <ul class="nav navbar-nav navbar-right">
             <li class="open1">
                 <% if (user && user.email != null) { %>

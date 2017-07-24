@@ -54,6 +54,7 @@ body {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.471;
+  height: 100%;
 }
 
 body .main{
@@ -82,7 +83,6 @@ img {
 }
 
 .left-col{
-  min-height: 100%;
   padding: 0;
   position: absolute;
   display: flex;
@@ -91,7 +91,7 @@ img {
 }
 
 .right-col{
-  min-height: 704px;
+  min-height: 535px;
   background: #F7F7F7;
   float: right;
 }
@@ -140,15 +140,136 @@ img {
   width: 75%;
   height: 100%;
   background-color: #12a;
+  position: relative;
 }
+
+.new-message{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+}
+
+.text-area{
+  width: 90%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  height: 60px;
+  resize: none;
+}
+
+.canvas ul{
+  padding: 10px;
+  width: 100%;
+  list-style-type: none;
+  margin: 0px;
+}
+
+.canvas h3{
+  margin: 10px;
+  font-weight: bold;
+}
+
+.canvas p{
+  display: inline;
+  margin: 0px;
+}
+
+.conversation-details{
+  display: inline-block;
+  width: 100%;
+}
+
+.conversation-details p.conversation-body{
+  float: left;
+  max-width: 70%;
+  font-size: 13px;
+  max-height: 30px;
+  line-height: 15px;
+}
+
+.conversation-details p.conversation-time{
+  float: right;
+  max-width: 30%;
+  font-size: 12px;
+  color: white;
+}
+
+.chat-view{
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 85%;
+}
+
+.message-details{
+  width: 70%;
+  background-color: white;
+  color: black;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 5px 5px rgba(255, 255, 255, 0.4) inset, 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  clear: both;
+  margin-bottom: 10px;
+  line-height: 20px;
+}
+
+.message-sender{
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.message-body{
+  font-size: 24px;
+}
+
+.message-time{
+  font-size: 10px;
+}
+
+
+
+
 
 /*footer css starts*/
 
 footer{
   display: inline-block;
   width: 100%;
-  margin-top: 5%;
-  margin-bottom: 2%;
+  margin-top: 1%;
+  margin-bottom: 1%;
 }
 
 /*footer css ends*/
+
+
+/*
+ *  Scroll Bar STYLE
+ */
+
+.chat-view::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+	border-radius: 10px;
+}
+
+.chat-view::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+.chat-view::-webkit-scrollbar-thumb
+{
+	background-color: #3366FF;
+	border-radius: 10px;
+	background-image: -webkit-linear-gradient(0deg,
+	                                          rgba(255, 255, 255, 0.5) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, 0.5) 50%,
+											  rgba(255, 255, 255, 0.5) 75%,
+											  transparent 75%,
+											  transparent)
+}
