@@ -21,29 +21,31 @@
         <div id="conversations" class="canvas" data-bind="visible: chosenViewId() === 'Conversations'">
           <div class="conversations-view"  data-bind="with: conversationList">
             <ul data-bind="foreach: conversations">
-              <li data-bind="click: $root.gotoChat(conversation._id)">
-                <input type="hidden" data-bind="">
-                <h3 data-bind="text: conversation.customer.profile.firstName + ' ' + conversation.customer.profile.lastName"></h3>
-                <div class="conversation-details">
-                  <p class="conversation-body" data-bind="text: body"></p>
-                  <p class="conversation-time" data-bind="text: $root.timeSinceLast(createdAt)"></p>
-                </div>
-              </li>
+              <!-- ko if: conversation -->
+                  <li data-bind="click: $root.gotoChat(conversation._id)">
+                    <input type="hidden" data-bind="">
+                    <h3 data-bind="text: conversation.customer.profile.firstName + ' ' + conversation.customer.profile.lastName"></h3>
+                    <div class="conversation-details">
+                      <p class="conversation-body" data-bind="text: body"></p>
+                      <p class="conversation-time" data-bind="text: $root.timeSinceLast(createdAt)"></p>
+                    </div>
+                  </li>
+              <!-- /ko -->
             </ul> 
           </div>
           <div class="messages-view">
-            <div class="chat-view" data-bind="with: messageList">
-              <div data-bind="foreach: conversation">
-                <div class="message-details" data-bind="style: {textAlign: $root.textAlignDirection(author.kind), float:$root.textAlignDirection(author.kind) }">
+            <div class="chat-view">
+              <div data-bind="foreach: messageList">
+                <div class="message-details" data-bind="style: {textAlign: $root.textAlignDirection(senderType), float:$root.textAlignDirection(senderType) }">
                   <div>
                     <div class="message-sender">
-                      <p data-bind="text: author.item.profile.firstName + ' ' + author.item.profile.lastName"></p>
+                      <p data-bind="text: senderName"></p>
                     </div>
                     <div class="message-body">
                       <p data-bind="text: body"></p>
                     </div>
                     <div class="message-time">
-                      <p data-bind="text: $root.timeSinceLast(createdAt)"></p>
+                      <p data-bind="text: $root.timeSinceLast(sentAt)"></p>
                     </div>
                   </div>
                 </div>

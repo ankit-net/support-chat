@@ -54,6 +54,12 @@ require('./config/passport')(passport);
 app.use('/', routes);
 app.use('/users', userRoutes);
 app.use('/chat', chatRoutes);
+app.use('/chat', function(req, res, next) {
+  res.on('header', function() {
+    console.trace('HEADERS GOING TO BE WRITTEN');
+  });
+  next();
+});
 app.use('/customer', function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
   res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');

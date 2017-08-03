@@ -1,30 +1,14 @@
 var socket = io.connect('http://localhost:3001');
 function DashboardViewModel(){
     var self = this;
+    self.subscribedConversations = ko.observableArray([]);
+    self.subscribedConversations.push = trackPush(self.subscribedConversations);
     self.views = ['Conversations', 'History', 'Operators', 'Prepared Messages'];
     self.chosenViewId = ko.observable();
     self.conversationList = ko.observable();
-    self.currentConversation = ko.observable();
-    self.messageList = ko.observable();
-    self.timeSinceLast = function(time){
-        return ko.computed(function(){
-            return moment(time).fromNow();
-        });   
-    }
-    self.messageToSend = ko.observable();
-    self.subscribedConversations = ko.observableArray([]);
-
-    self.textAlignDirection = function(userType){
-        return ko.computed(function(){
-            if(userType === 'User')
-                return 'right';
-            return 'left';
-        });
-    }
-
+    
     self.gotoView = function(view){
         self.chosenViewId(view);
-        // console.log(self.chosenViewId());
         $.get('/chat')
         .done(function(data){
             // console.log(data);
@@ -35,31 +19,64 @@ function DashboardViewModel(){
         });
     };
 
+    self.currentConversationId = ko.observable();
+    self.messageList = ko.observableArray([]);
+    
     self.gotoChat = function(conversationId){
         if(conversationId !== null || conversationId !== undefined){
             // console.log(conversation.conversation._id);
-            self.currentConversation(conversationId);
+            self.currentConversationId(conversationId);
             $.get('/chat/'+ conversationId)
             .done(function(data){
-                // console.log(data);
-                self.messageList(data);
+                console.log(data);
+                self.messageList.removeAll();
+                data.conversation.forEach(function(conv){
+                    var message = {
+                        conversationId: conv.conversation._id,
+                        body: conv.body,
+                        senderId: conv.author.item._id,
+                        senderName: conv.author.item.profile.firstName + conv.author.item.profile.lastName,
+                        senderType: conv.author.kind,
+                        sentAt: conv.sentAt
+                    };
+                    self.messageList.push(message);
+                });
             });
         }
     }
 
+    self.messageToSend = ko.observable();
+
     self.sendButtonHandler = function(){
-        console.log('current conversationId is ' + self.currentConversation());
-        $.post('/chat/'+self.currentConversation(), {composedMessage:self.messageToSend()})
-        .done(function(data){
-            if(data.message === 'Reply successfully sent!'){
-                self.gotoChat(self.currentConversation());
-                self.messageToSend('');
-                socket.emit('new message', self.currentConversation());
-            }
+        console.log('current conversationId is ' + self.currentConversationId());
+        //send event using socket
+        socket.emit('new message', {
+            conversationId: self.currentConversationId(),
+            body: self.messageToSend(),
+            senderId: $('#userId').val(),
+            senderName: $('#userFullName').val(),
+            senderType: 'User'
+        });
+        self.messageToSend('');
+    }
+
+
+    //helper functions
+    self.timeSinceLast = function(time){
+        return ko.computed(function(){
+            return moment(time).fromNow();
+        });   
+    }
+
+    self.textAlignDirection = function(userType){
+        return ko.computed(function(){
+            if(userType === 'User')
+                return 'right';
+            return 'left';
         });
     }
 
-    self.subscribedConversations.push = trackPush(self.subscribedConversations);
+    //init actions
     self.gotoView('Conversations');
 }
 
@@ -76,7 +93,10 @@ var trackPush = function(array) {
 var dashboardVM = new DashboardViewModel(); 
 ko.applyBindings(dashboardVM);
 
-socket.on('refresh messages', function(conversation){
-    console.log('refresh messages for ' + conversation);
-    dashboardVM.gotoChat(conversation);
+socket.on('receive message', function(conversation){
+    console.log('received message : ' + conversation);
+    if(dashboardVM.currentConversationId() === conversation.conversationId){
+        dashboardVM.messageList.push(conversation);
+    }
+    dashboardVM.gotoView('Conversations');
 });

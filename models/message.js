@@ -14,6 +14,10 @@ const MessageSchema = new Schema({
     author:{
         kind: String,
         item: {type: Schema.Types.ObjectId, refPath: 'author.kind'}
+    },
+    sentAt:{ 
+        type : Date,
+        default: Date.now
     }
 },
 {

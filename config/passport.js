@@ -18,7 +18,7 @@ module.exports = function(passport){
     // });
 
     passport.serializeUser( (user, done) => {
-        var sessionUser = { _id: user._id, email: user.email, role: user.role }
+        var sessionUser = { _id: user._id, email: user.email, role: user.role, name: user.profile.firstName + ' ' + user.profile.lastName}
         done(null, sessionUser)
     })
 
