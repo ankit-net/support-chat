@@ -18,6 +18,10 @@ const MessageSchema = new Schema({
     sentAt:{ 
         type : Date,
         default: Date.now
+    },
+    isSystemGenerated:{
+        type : Boolean,
+        default : false
     }
 },
 {

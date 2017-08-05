@@ -134,6 +134,7 @@ img {
   width: 25%;
   height: 100%;
   background-color: #123;
+  position: relative;
 }
 
 .messages-view{
@@ -163,6 +164,19 @@ img {
   width: 100%;
   list-style-type: none;
   margin: 0px;
+}
+
+.ongoing, .open{
+  padding: 10px;
+  width: 100%;
+  margin: 0px;
+}
+
+.open{
+  position: absolute;
+  bottom: 0px;
+  height: 40%;
+  max-height: 40%;
 }
 
 .canvas h3{

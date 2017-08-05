@@ -11,7 +11,7 @@ function DashboardViewModel(){
         self.chosenViewId(view);
         $.get('/chat')
         .done(function(data){
-            // console.log(data);
+            console.log(data);
             self.conversationList(data);
             data.conversations.forEach(function(conv){
                 self.subscribedConversations.push(conv.conversation._id);
@@ -94,9 +94,14 @@ var dashboardVM = new DashboardViewModel();
 ko.applyBindings(dashboardVM);
 
 socket.on('receive message', function(conversation){
-    console.log('received message : ' + conversation);
+    console.log('received message : ' + JSON.stringify(conversation));
     if(dashboardVM.currentConversationId() === conversation.conversationId){
         dashboardVM.messageList.push(conversation);
     }
     dashboardVM.gotoView('Conversations');
+});
+
+socket.on('new conversation', function(data){
+    console.log('new conversation started with data : ' + JSON.stringify(data));
+    dashboardVM.messageList.push(data);
 });

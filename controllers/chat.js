@@ -25,7 +25,7 @@ exports.getConversationsForOperator = function(operatorId, callback){
                 .populate('author.item', 'profile email')
                 .populate({
                     path: 'conversation',
-                    select: 'customer _id',
+                    select: 'customer _id status',
                     populate: {path: 'customer', select:'profile'}
                 })
             );
@@ -33,7 +33,7 @@ exports.getConversationsForOperator = function(operatorId, callback){
 
         return Promise.all(fullConversationRes);
     }).then(function(listOfConversations) {
-        callback(true, {conversations:listOfConversations});
+        callback(true, {conversations:listOfConversations.filter(function(x){return x !== null})});
     }, function(err) {
         callback(false, {error: err});
     });
@@ -47,6 +47,7 @@ exports.sendReplyToConversation1 = function(conversationId, senderId, senderType
         if(conversation && senderType=='User' && conversation.status === 'open'){
             conversation.status = 'ongoing';
             conversation.participant = senderId;
+            //emit conversation gone event
             return conversation.save();
         }else{
             return conversation;

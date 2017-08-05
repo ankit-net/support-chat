@@ -10,7 +10,7 @@ var socketEvents = require('./socketEvents');
 var routes = require('./routes/index');
 var userRoutes = require('./routes/users');
 var chatRoutes = require('./routes/chat');
-var customerRoutes = require('./routes/customer');
+// var customerRoutes = require('./routes/customer');
 var port = process.env.port || 3000;
 var socketPort = 3001;
 
@@ -60,6 +60,7 @@ app.use('/chat', function(req, res, next) {
   });
   next();
 });
+var customerRoutes = require('./routes/customer')(io);
 app.use('/customer', function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
   res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');

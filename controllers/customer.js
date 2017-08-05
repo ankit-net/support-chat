@@ -6,7 +6,7 @@ const Customer = require('../models/customer'),
 
 //email, phone, firstName, lastName,
 exports.createCustomerAndStartConversation = function(email, phone, firstName, lastName, callback){
-    var customer;
+    var customer, isNewConversation, fetchedConversation;
     Customer.findOne({'email': email, 'phone': phone})
     .exec()
     .then(function(customer){
@@ -38,19 +38,44 @@ exports.createCustomerAndStartConversation = function(email, phone, firstName, l
                 customer: customer._id,
                 status: 'open'
             });
+            isNewConversation = true;
             return newConversation.save();    
         }else{
+            isNewConversation = false;
             return conversation;
         }
     })
     .then(function(newConversation){
         console.log(newConversation);
-        callback(true, {
+        fetchedConversation = newConversation;
+        const reply = new Message({
+            conversation: newConversation._id,
+            body: 'Initiated',
+            author: {kind: 'Customer', item: customer._id},
+            sentAt: new Date().toISOString(),
+            isSystemGenerated: true
+        });
+        return reply.save();  
+    })
+    .then(function(message){
+        console.log(message);
+        return Message.findOne({'_id': message._id})
+        .select('_id createdAt body author conversation isSystemGenerated')
+        .populate('author.item', 'profile email')
+        .populate({
+            path: 'conversation',
+            select: 'customer _id status',
+            populate: {path: 'customer', select:'profile'}
+        }).exec();
+    })
+    .then(function(message){
+        console.log(message);
+        callback(true, isNewConversation, message, {
             customerId: customer._id,
-            conversationId: newConversation._id
+            conversationId: fetchedConversation._id
         });
     }).catch(function(err){
         console.log('error');
-        callback(false, {error1: err});
+        callback(false, false, null, {error1: err});
     });
 };

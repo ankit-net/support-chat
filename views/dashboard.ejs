@@ -20,18 +20,30 @@
       <div class="col-md-10 right-col">
         <div id="conversations" class="canvas" data-bind="visible: chosenViewId() === 'Conversations'">
           <div class="conversations-view"  data-bind="with: conversationList">
-            <ul data-bind="foreach: conversations">
-              <!-- ko if: conversation -->
-                  <li data-bind="click: $root.gotoChat(conversation._id)">
+            <div class="ongoing" data-bind="foreach: conversations.sort(function(l, r){return l.createdAt < r.createdAt ? 1 : -1})">
+              <!-- ko if: conversation.status == 'ongoing' -->
+                  <div data-bind="click: $root.gotoChat(conversation._id)">
                     <input type="hidden" data-bind="">
                     <h3 data-bind="text: conversation.customer.profile.firstName + ' ' + conversation.customer.profile.lastName"></h3>
                     <div class="conversation-details">
                       <p class="conversation-body" data-bind="text: body"></p>
                       <p class="conversation-time" data-bind="text: $root.timeSinceLast(createdAt)"></p>
                     </div>
-                  </li>
+                  </div>
               <!-- /ko -->
-            </ul> 
+            </div>
+            <div class="open" data-bind="foreach: conversations.sort(function(l, r){return l.createdAt < r.createdAt ? 1 : -1})">
+              <!-- ko if: conversation.status == 'open' -->
+                  <div data-bind="click: $root.gotoChat(conversation._id)">
+                    <input type="hidden" data-bind="">
+                    <h3 data-bind="text: conversation.customer.profile.firstName + ' ' + conversation.customer.profile.lastName"></h3>
+                    <div class="conversation-details">
+                      <p class="conversation-body" data-bind="text: body"></p>
+                      <p class="conversation-time" data-bind="text: $root.timeSinceLast(createdAt)"></p>
+                    </div>
+                  </div>
+              <!-- /ko -->
+            </div>
           </div>
           <div class="messages-view">
             <div class="chat-view">
