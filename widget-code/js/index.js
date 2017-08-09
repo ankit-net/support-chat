@@ -56,7 +56,7 @@ function ChatViewModel(){
                 self.customerId(result.customerId);
                 self.conversationId(result.conversationId);
                 self.getMessages();
-                socket.emit('enter conversation', {conversationId:result.conversationId, userId:self.customerEmail()});
+                socket.emit('joined conversation', {conversationId:result.conversationId, userId:self.customerEmail(), senderType:'Customer'});
             }
         });
     }
@@ -64,19 +64,28 @@ function ChatViewModel(){
         return (self.customerId() === null || self.customerId() === undefined) && (self.conversationId() === null || self.conversationId() === undefined);
     });
     
-    self.messagesList = ko.observable();
+    self.messagesList = ko.observableArray([]);
     self.getMessages = function(){
         $.ajax("http://localhost:3000/customer/"+self.conversationId(), {
             type: "get", contentType: "application/json",
             success: function(result) {
-                console.log(result);
-                self.messagesList(result);
+                result.conversation.forEach(function(conv){
+                    var message = {
+                        conversationId: conv.conversation._id,
+                        body: conv.body,
+                        senderId: conv.author.item._id,
+                        senderName: conv.author.item.profile.firstName + conv.author.item.profile.lastName,
+                        senderType: conv.author.kind,
+                        sentAt: conv.sentAt
+                    };
+                    self.messagesList.push(message);
+                });
             }
         });
     }
     self.getClass = function(userType){
         return ko.computed(function(){
-            if(userType === 'User')
+            if(userType === 'Customer')
                 return 'user-chat';
             return 'admin-chat';
         });
@@ -84,20 +93,25 @@ function ChatViewModel(){
     self.messageToSend = ko.observable();
     self.sendButtonHandler = function(){
         console.log(self.conversationId());
-        $.post('http://localhost:3000/customer/'+self.conversationId(), {composedMessage:self.messageToSend(), customerId:self.customerId()})
-        .done(function(data){
-            if(data.message === 'Reply successfully sent!'){
-                self.messageToSend('');
-                socket.emit('new message', self.conversationId());
-            }
-        });
+        
+        var message = {
+            conversationId: self.conversationId(),
+            body: self.messageToSend(),
+            senderId: self.customerId(),
+            senderName: self.customerName(),
+            senderType: 'Customer'
+        };
+        
+        socket.emit('new message', message);
+        self.messageToSend('');
+//        self.messagesList.push(message);
     }
-    
 }
 
 var chatVM = new ChatViewModel();
 ko.applyBindings(chatVM, document.getElementById('chat-box'));
-socket.on('refresh messages', function(conversation){
-    console.log('refresh messages for ' + conversation);
-    chatVM.getMessages();
+
+socket.on('receive message', function(conversation){
+    console.log('received message : ' + conversation);
+    chatVM.messagesList.push(conversation);
 });

@@ -15,7 +15,7 @@ module.exports = function(io){
             if(success){
                 //send socket event
                 if(isNewConversation){
-                    io.sockets.emit('new conversation', firstMessage);
+                    io.sockets.in('operators').emit('new conversation', firstMessage);
                 }
                 res.status(200).json(data);
             }else{
@@ -35,7 +35,12 @@ module.exports = function(io){
     });
 
     customerRoutes.post('/:conversationId', function(req, res, next){
-        chatController.sendReplyToConversation1(req.params.conversationId, req.body.customerId, req.body.senderType, req.body.composedMessage, new Date().toISOString(), function(success, data){
+        chatController.sendReplyToConversation1(req.params.conversationId, 
+                                                req.body.customerId, 
+                                                req.body.senderType, 
+                                                req.body.composedMessage, 
+                                                new Date().toISOString(), 
+                                                function(success, conversationFromOpenToOngoing, conversationId, data){
             if(success){
                 res.status(200).json(data);
             }else{

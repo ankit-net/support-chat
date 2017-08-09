@@ -1,23 +1,32 @@
 var socket = io.connect('http://localhost:3001');
 function DashboardViewModel(){
     var self = this;
-    self.subscribedConversations = ko.observableArray([]);
-    self.subscribedConversations.push = trackPush(self.subscribedConversations);
     self.views = ['Conversations', 'History', 'Operators', 'Prepared Messages'];
     self.chosenViewId = ko.observable();
-    self.conversationList = ko.observable();
+    self.conversationList = ko.observableArray([]);
+    self.conversationList.push = trackPush(self.conversationList);
     
     self.gotoView = function(view){
         self.chosenViewId(view);
         $.get('/chat')
         .done(function(data){
-            console.log(data);
-            self.conversationList(data);
+            // console.log(data);
+            self.conversationList(data.conversations);
             data.conversations.forEach(function(conv){
-                self.subscribedConversations.push(conv.conversation._id);
+                socket.emit('joined conversation', {conversationId:conv.conversation._id, userId:$('#userEmail').val(), senderType:'Operator'});
             });
         });
     };
+
+    self.removeConversationWithId = function (conversationId) {
+        self.conversationList.remove(function(conv) {
+            if(conv.conversation._id == conversationId){
+                socket.emit('left conversation', conversationId);
+                return true;
+            }
+            return false;
+        });
+    }
 
     self.currentConversationId = ko.observable();
     self.messageList = ko.observableArray([]);
@@ -50,14 +59,16 @@ function DashboardViewModel(){
     self.sendButtonHandler = function(){
         console.log('current conversationId is ' + self.currentConversationId());
         //send event using socket
-        socket.emit('new message', {
+        var message = {
             conversationId: self.currentConversationId(),
             body: self.messageToSend(),
             senderId: $('#userId').val(),
             senderName: $('#userFullName').val(),
             senderType: 'User'
-        });
+        };
+        socket.emit('new message', message);
         self.messageToSend('');
+        // self.messageList.push(message);
     }
 
 
@@ -78,14 +89,14 @@ function DashboardViewModel(){
 
     //init actions
     self.gotoView('Conversations');
+    socket.emit('operator joined', {userId: $('#userId').val()});
 }
 
 var trackPush = function(array) {
     var push = array.push;
     return function() {
         console.log(arguments[0]);
-        var user
-        socket.emit('enter conversation', {conversationId:arguments[0], userId:$('#userEmail').val()});
+        socket.emit('joined conversation', {conversationId:arguments[0].conversation._id, userId:$('#userEmail').val(), senderType:'Operator'});
         push.apply(this,arguments);
     }
 }
@@ -93,15 +104,23 @@ var trackPush = function(array) {
 var dashboardVM = new DashboardViewModel(); 
 ko.applyBindings(dashboardVM);
 
-socket.on('receive message', function(conversation){
-    console.log('received message : ' + JSON.stringify(conversation));
-    if(dashboardVM.currentConversationId() === conversation.conversationId){
-        dashboardVM.messageList.push(conversation);
+socket.on('receive message', function(message){
+    console.log('received message : ' + JSON.stringify(message));
+    if(dashboardVM.currentConversationId() === message.conversationId){
+        dashboardVM.messageList.push(message);
     }
     dashboardVM.gotoView('Conversations');
 });
 
 socket.on('new conversation', function(data){
     console.log('new conversation started with data : ' + JSON.stringify(data));
-    dashboardVM.messageList.push(data);
+    dashboardVM.conversationList.push(data);
+});
+
+//operatorId, conversationId
+socket.on('operator claimed conversation', function(data){
+    console.log('an operator claimed a conversation with details : ' + JSON.stringify(data));
+    if(data.userId != $('#userId').val()){
+        dashboardVM.removeConversationWithId(data.conversationId);
+    }      
 });

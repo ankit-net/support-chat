@@ -74,10 +74,10 @@
                             </div>
                         </div>     
                         <div class="show-hide-chat">                
-                            <div class="start-chat-body" data-bind="with: messagesList">
-                                <div data-bind="foreach: conversation">
-                                    <div data-bind="css: $root.getClass(author.kind)">
-                                    <div class="name" data-bind="text: author.item.profile.firstName + ' ' + author.item.profile.lastName"></div>
+                            <div class="start-chat-body">
+                                <div data-bind="foreach: messagesList">
+                                    <div data-bind="css: $root.getClass(senderType)">
+                                    <div class="name" data-bind="text: senderName"></div>
                                     <div class="msg" data-bind="text: body"></div>
                                 </div>
                                 </div>

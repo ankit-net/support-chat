@@ -19,8 +19,8 @@
       </div>
       <div class="col-md-10 right-col">
         <div id="conversations" class="canvas" data-bind="visible: chosenViewId() === 'Conversations'">
-          <div class="conversations-view"  data-bind="with: conversationList">
-            <div class="ongoing" data-bind="foreach: conversations.sort(function(l, r){return l.createdAt < r.createdAt ? 1 : -1})">
+          <div class="conversations-view">
+            <div class="ongoing" data-bind="foreach: conversationList.sort(function(l, r){return l.createdAt < r.createdAt ? 1 : -1})">
               <!-- ko if: conversation.status == 'ongoing' -->
                   <div data-bind="click: $root.gotoChat(conversation._id)">
                     <input type="hidden" data-bind="">
@@ -32,7 +32,7 @@
                   </div>
               <!-- /ko -->
             </div>
-            <div class="open" data-bind="foreach: conversations.sort(function(l, r){return l.createdAt < r.createdAt ? 1 : -1})">
+            <div class="open" data-bind="foreach: conversationList.sort(function(l, r){return l.createdAt < r.createdAt ? -1 : 1})">
               <!-- ko if: conversation.status == 'open' -->
                   <div data-bind="click: $root.gotoChat(conversation._id)">
                     <input type="hidden" data-bind="">

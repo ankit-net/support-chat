@@ -9,7 +9,7 @@ var socketEvents = require('./socketEvents');
 //import routes
 var routes = require('./routes/index');
 var userRoutes = require('./routes/users');
-var chatRoutes = require('./routes/chat');
+// var chatRoutes = require('./routes/chat');
 // var customerRoutes = require('./routes/customer');
 var port = process.env.port || 3000;
 var socketPort = 3001;
@@ -53,6 +53,7 @@ require('./config/passport')(passport);
 
 app.use('/', routes);
 app.use('/users', userRoutes);
+var chatRoutes = require('./routes/chat')(io);
 app.use('/chat', chatRoutes);
 app.use('/chat', function(req, res, next) {
   res.on('header', function() {

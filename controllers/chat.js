@@ -41,20 +41,24 @@ exports.getConversationsForOperator = function(operatorId, callback){
 
 exports.sendReplyToConversation1 = function(conversationId, senderId, senderType, body, sentAt, callback) {  
     //find conversation
+    var conversationFromOpenToOngoing = false;
+    var conversationId;
     Conversation.findOne({_id: conversationId}).exec()
     .then(function(conversation){
         console.log(conversation);
         if(conversation && senderType=='User' && conversation.status === 'open'){
             conversation.status = 'ongoing';
             conversation.participant = senderId;
-            //emit conversation gone event
+            conversationFromOpenToOngoing = true;
             return conversation.save();
         }else{
+            conversationFromOpenToOngoing = false;
             return conversation;
         }
     })
     .then(function(savedConversation){
         console.log(savedConversation);
+        conversationId = savedConversation._id;
         const reply = new Message({
             conversation: savedConversation._id,
             body: body,
@@ -64,11 +68,11 @@ exports.sendReplyToConversation1 = function(conversationId, senderId, senderType
         return reply.save();
     })
     .then(function(savedMessage){
-        callback(true, { message: 'Reply successfully sent!', reply: savedMessage._id});
+        callback(true, conversationFromOpenToOngoing, conversationId, { message: 'Reply successfully sent!', reply: savedMessage._id});
     })
     .catch(function(err){
         console.log('error');
-        callback(false, {error1: err});
+        callback(false, false, null, {error1: err});
     });
 };
 

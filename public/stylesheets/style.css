@@ -177,6 +177,7 @@ img {
   bottom: 0px;
   height: 40%;
   max-height: 40%;
+  overflow-y: auto;
 }
 
 .canvas h3{
