@@ -1,10 +1,17 @@
-var socket = io.connect('http://localhost:3001');
+var socket = io.connect('http://localhost:3001', {
+                        'reconnection': true,
+                        'reconnectionDelay': 1000,
+                        'reconnectionDelayMax' : 5000,
+                        'reconnectionAttempts': 5
+                    });
+var connected = false;
 function DashboardViewModel(){
     var self = this;
     self.views = ['Conversations', 'History', 'Operators', 'Prepared Messages'];
     self.chosenViewId = ko.observable();
     self.conversationList = ko.observableArray([]);
     self.conversationList.push = trackPush(self.conversationList);
+    self.currentConversationId = ko.observable();
     
     self.gotoView = function(view){
         self.chosenViewId(view);
@@ -15,6 +22,12 @@ function DashboardViewModel(){
             data.conversations.forEach(function(conv){
                 socket.emit('joined conversation', {conversationId:conv.conversation._id, userId:$('#userEmail').val(), senderType:'Operator'});
             });
+            
+            if(!self.currentConversationId()){
+                console.log('setting the current conversationId as the first conversation of the list');
+                self.currentConversationId(data.conversations[0].conversation._id);
+            }
+            // self.gotoChat(self.currentConversationId());
         });
     };
 
@@ -28,13 +41,12 @@ function DashboardViewModel(){
         });
     }
 
-    self.currentConversationId = ko.observable();
+    
     self.messageList = ko.observableArray([]);
     
     self.gotoChat = function(conversationId){
+        console.log('gotoChat Called for conversationId : ' + conversationId);
         if(conversationId !== null || conversationId !== undefined){
-            // console.log(conversation.conversation._id);
-            self.currentConversationId(conversationId);
             $.get('/chat/'+ conversationId)
             .done(function(data){
                 console.log(data);
@@ -86,10 +98,6 @@ function DashboardViewModel(){
             return 'left';
         });
     }
-
-    //init actions
-    self.gotoView('Conversations');
-    socket.emit('operator joined', {userId: $('#userId').val()});
 }
 
 var trackPush = function(array) {
@@ -123,4 +131,16 @@ socket.on('operator claimed conversation', function(data){
     if(data.userId != $('#userId').val()){
         dashboardVM.removeConversationWithId(data.conversationId);
     }      
+});
+
+socket.on('connect', function(){
+    connected = true;
+    console.log('connected');
+    dashboardVM.gotoView('Conversations');
+    socket.emit('operator joined', {userId: $('#userId').val()});
+});
+
+socket.on('disconnect', function(){
+    connected = false;
+    console.log('disconnected');
 });

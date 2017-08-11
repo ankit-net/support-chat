@@ -80,7 +80,7 @@ body{
     position: absolute;
     right: -5px;}
 .toogle-menu i{font-size: 20px; cursor: pointer;}
-.comment-box{width:100%; float: left}
+.comment-box{width:100%; float: left; position: relative}
 .comment-box input[type="text"]{background: #fff; border: 2px solid #ddd;  float: left; font-size: 16px; padding: 3%; width: 76%;}
 .comment-box a{background: #df314f ; border: 2px solid #df314f;  float: left; font-size: 16px; padding: 3%; width: 24%; border-left: 0; text-align: center; color: #fff; font-weight: bold;}
 .show-hide-chat{width: 100%; float: left;}
@@ -97,3 +97,12 @@ body{
     padding: 2%; text-transform: uppercase;}
 .success{width:100%; float: left; margin-top: 10px;}
 .success p{color:green; font-weight: bold;}
+.overlay {
+    opacity:0;
+    filter: alpha(opacity = 0);
+    position:absolute;
+    top:0; bottom:0; left:0; right:0;
+    display:block;
+    z-index:2;
+    background:transparent;
+}

@@ -38,7 +38,7 @@ var io = require('socket.io')(http);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieParser('mytestsecret'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
@@ -55,15 +55,13 @@ app.use('/', routes);
 app.use('/users', userRoutes);
 var chatRoutes = require('./routes/chat')(io);
 app.use('/chat', chatRoutes);
-app.use('/chat', function(req, res, next) {
-  res.on('header', function() {
-    console.trace('HEADERS GOING TO BE WRITTEN');
-  });
-  next();
-});
 var customerRoutes = require('./routes/customer')(io);
 app.use('/customer', function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+  var allowedOrigins = ['http://localhost:8080', 'http://192.168.0.41:8080', 'http://127.0.0.1:8080'];
+  var origin = req.headers.origin;
+  if(allowedOrigins.indexOf(origin) > -1){
+       res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept");
   next();
