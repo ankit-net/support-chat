@@ -34,6 +34,10 @@ router.get('/forgot', function(req, res){
 
 router.post('/forgot', authenticationController.forgotPassword);
 
+router.get('/reset/:token', authenticationController.getResetForm);
+
+router.post('/reset/:token', authenticationController.resetPassword);
+
 router.get('/dashboard', authenticationController.userAuthenticated, function(req, res) {
   console.log('Cookies on dashboard: ', req.cookies);
   console.log('Session on dashboard: ', req.session);

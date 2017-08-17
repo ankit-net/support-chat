@@ -16,7 +16,13 @@ const PreparedMessageSchema = new Schema({
     },
     isActive:{
         kind: Boolean,
-        required: true
+        required: true,
+        default: false
+    },
+    lastUpdatedBy:{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: false
     }
 },
 {

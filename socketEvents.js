@@ -1,8 +1,8 @@
 const chatController = require('./controllers/chat'),
     authController = require('./controllers/authentication'),
+    userController = require('./controllers/user'),
     Message = require('./models/message'),
     User = require('./models/user');
-
 
 exports = module.exports = function(io) {  
   // Set socket.io listeners.
@@ -17,6 +17,17 @@ exports = module.exports = function(io) {
     socket.on('operator joined', (data) => {
       socket.join('operators');
       console.log('SOCKET OPERATOR JOINED =====> ' + data.userId);
+      userController.setOperatorSocketInfo(data.userId, socket.id, function(success, info){
+        console.log('SOCKET OPERATOR INFO SET =====> ');
+        console.log(JSON.stringify(info));
+      });
+      userController.setOperatorOnlineStatus(data.userId, function(success, info){
+        console.log('SOCKET OPERATOR STATUS ONLINE SET =====> ');
+        console.log(JSON.stringify(info));
+        if(success){
+          io.sockets.in('operators').emit('operator online', info.userId);
+        }
+      });
     });
 
     socket.on('left conversation', (conversationId) => {
@@ -49,7 +60,13 @@ exports = module.exports = function(io) {
     });
 
     socket.on('disconnect', () => {
-      //console.log('user disconnected');
+      userController.setOperatorOfflineStatus(socket.id, function(success, info){
+        console.log('SOCKET OPERATOR STATUS OFFLINE SET =====> ');
+        console.log(JSON.stringify(info));
+        if(success){
+          io.sockets.in('operators').emit('operator offline', info.userId);
+        }
+      });
     });
   });
 }

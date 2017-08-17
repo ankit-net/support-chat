@@ -3,16 +3,85 @@ const crypto = require('crypto'),
     User = require('../models/user'),
     waterfall = require('async-waterfall');
 
+exports.getOperators = function(callback){
+    User.find({role:'Operator'})
+    .select('_id profile email status')
+    .sort('email')
+    .exec()
+    .then(function(users){
+        callback(true, {users: users});
+    })
+    .catch(function(err){
+        console.log(err);
+        callback(false, {error: err});
+    });
+}
+
+exports.setOperatorOnlineStatus = function(userId, callback){
+    User.findOne({'_id': userId})
+    .exec()
+    .then(function(user){
+        user.status = 'online';
+        return user.save();
+    })
+    .then(function(savedUser){
+        callback(true, {message: 'User status set to online', userId: savedUser._id});
+    })
+    .catch(function(err){
+        console.log(err);
+        callback(false, {error: err});
+    });
+}
+
+exports.setOperatorSocketInfo = function(userId, socketId, callback){
+    User.findOne({'_id': userId})
+    .exec()
+    .then(function(user){
+        user.socketId = socketId;
+        return user.save();
+    })
+    .then(function(savedUser){
+        callback(true, {message: 'User socketid info set'});
+    })
+    .catch(function(err){
+        console.log(err);
+        callback(false, {error: err});
+    });
+}
+
+exports.setOperatorOfflineStatus = function(socketId, callback){
+    User.findOne({'socketId': socketId})
+    .exec()
+    .then(function(user){
+        if(user){
+            user.status = 'offline';
+            return user.save();
+        }
+        return null;
+    })
+    .then(function(savedUser){
+        if(savedUser){
+            callback(true, {message: 'User status set to offline', userId: savedUser._id});
+        }
+        else{
+            callback(false, {message: 'No user found for the socketid : ' + socketId});
+        }
+    })
+    .catch(function(err){
+        console.log(err);
+        callback(false, {error: err});
+    });
+}
+
 exports.createOperator = function(req, res, next){
     waterfall([
         function(done){
             User.findOne({'email': req.body.email}, function(err, user){
                 if(err){
-                    // return res.status(401).json({error: err});
                     done(err);
                 }
-                if(user){
-                    return res.status(401).json({error: 'User for this email already exists.'});
+                else if(user){
+                    return res.status(500).json({error: 'User for this email already exists.'});
                 }else{
                     var newUser = new User({
                         email: req.body.email,
@@ -59,16 +128,21 @@ exports.createOperator = function(req, res, next){
                 if(err){
                     done(err);
                 }else{
-                    res.status(200).json({message: 'User created.', userId: user._id});
+                    res.status(200).json({message: 'User created.', user:{
+                        _id: user._id,
+                        status: user.status,
+                        email: user.email,
+                        profile: {
+                            firstName: user.profile.firstName,
+                            lastName: user.profile.lastName
+                        }
+                    }});
                 }
             });
         }
     ],
     function(err){
         console.log(err.toString);
-        if(err){
-            return next(err);
-        }
-        res.redirect('/forgot');
+        res.status(500).json({error: err});
     });
 };

@@ -23,7 +23,12 @@ var userSchema = mongoose.Schema({
         default: 'Operator'
     },
     resetPasswordToken: {type: String},
-    resetPasswordExpires: {type: Date}
+    resetPasswordExpires: {type: Date},
+    status: {
+        type: String,
+        default: 'offline'
+    },
+    socketId: {type: String}
 },
 {
     timestamps: true

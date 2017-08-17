@@ -89,13 +89,68 @@ exports.forgotPassword = function(req, res){
     });
 };
 
+exports.getResetForm = function(req, res){
+    User.findOne({resetPasswordToken:req.params.token})
+    .exec()
+    .then(function(user){
+        if(!user){
+            req.flash('loginMessage', 'Password reset token is invalid.');
+            return res.redirect('/login');
+        }if(new Date(user.resetPasswordExpires)-new Date() <= 0){
+            req.flash('loginMessage', 'Password reset token has expired.');
+            return res.redirect('/login');
+        }else{
+            res.render('resetPassword.ejs', {
+                user: req.user,
+                message: req.flash('resetPasswordMessage')
+            });
+        }
+    }).catch(function(err){
+        console.log(err);
+        req.flash('loginMessage', err);
+        return res.redirect('/login');
+    });
+}
+
 exports.resetPassword = function(req, res){
     waterfall([
         function(done){
+            User.findOne({ resetPasswordToken: req.params.token}, function(err, user) {
+                if (!user || new Date(user.resetPasswordExpires)-new Date() <= 0) {
+                    req.flash('resetPasswordMessage', 'Password reset token is invalid or has expired.');
+                    return res.redirect('back');
+                }
 
+                user.password = req.body.password;
+                user.resetPasswordToken = undefined;
+                user.resetPasswordExpires = undefined;
+
+                user.save(function(err) {
+                    req.logIn(user, function(err) {
+                        done(err, user);
+                    });
+                });
+            });
         },
-        function(){
+        function(user, done){
+            console.log('preparing to send email.');
             
+            var mailOptions = {
+                to: user.email,
+                from: 'niraj.kumar@psquickit.com',
+                subject: 'Node.js Password Changed',
+                text: 'Hello,\n\n' +
+                'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+            };
+            
+            emailController.sendEmail(mailOptions, function(err, info) {
+                if(err){
+                    done(err);
+                }else{
+                    req.flash('loginMessage', 'Success! Your password has been changed.');
+                    res.redirect('/login');
+                }
+            });
         }
     ], 
     function(err){
@@ -103,6 +158,6 @@ exports.resetPassword = function(req, res){
         if(err){
             return next(err);
         }
-        res.redirect('/forgot');
+        res.redirect('/');
     });
 };

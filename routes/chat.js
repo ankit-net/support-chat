@@ -1,4 +1,3 @@
-var express = require('express');  
 var passport = require('passport');  
 const chatController = require('../controllers/chat'),
     authController = require('../controllers/authentication'),

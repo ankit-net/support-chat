@@ -72,6 +72,21 @@
         <div id="history" class="canvas" data-bind="visible: chosenViewId() === 'History'">
         </div>
         <div id="operators" class="canvas" data-bind="visible: chosenViewId() === 'Operators'">
+          <div class="operators" data-bind="foreach: operatorsList">
+            <div class="">
+              <input type="hidden" data-bind="">
+              <h3 data-bind="text: profile.firstName + ' ' + profile.lastName"></h3>
+              <div class="">
+                <p class="" data-bind="text: status"></p>
+              </div>
+            </div>
+          </div>
+          <div class="add-operator">
+            <input type="text" placeholder="First Name" data-bind="value: operator_fname">
+            <input type="text" placeholder="Last Name" data-bind="value: operator_lname">
+            <input type="text" placeholder="Email" data-bind="value: operator_email">
+            <input type="button" value="Create Operator"  data-bind="click: operator_addNew">
+          </div>
         </div>
         <div id="prepared-messages" class="canvas" data-bind="visible: chosenViewId() === 'Prepared Messages'">
         </div>

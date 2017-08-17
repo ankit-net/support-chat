@@ -8,15 +8,6 @@ const localOptions = {
     };
 
 module.exports = function(passport){
-    // passport.serializeUser(function(user, done){
-    //     done(null, user.id);
-    // });
-    // passport.deserializeUser(function(id, done){
-    //     User.findById(id, function(err, user){
-    //         done(err, user);
-    //     });
-    // });
-
     passport.serializeUser( (user, done) => {
         var sessionUser = { _id: user._id, email: user.email, role: user.role, name: user.profile.firstName + ' ' + user.profile.lastName}
         done(null, sessionUser)
