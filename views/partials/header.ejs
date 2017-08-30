@@ -14,8 +14,8 @@
         <input id="userEmail" type="hidden" value="<%= user.email %>"/>
         <input id="userId" type="hidden" value="<%= user._id %>"/>
         <input id="userFullName" type="hidden" value="<%= user.name %>"/>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="open1">
+        <ul id="profile" class="nav navbar-nav navbar-right">
+            <li id="profile-options" class="">
                 <% if (user && user.email != null) { %>
                     <a class="user-profile"><img src="https://avatars.io/gravatar/<%= user.email %>" class="img-circle"><%= user.email %><span class=" fa fa-angle-down"></span></a>
                     <ul class="dropdown-menu pull-right">

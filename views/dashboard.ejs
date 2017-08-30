@@ -4,6 +4,7 @@
     <script src="/javascripts/jquery-3.2.1.js"></script>
     <script src="/javascripts/moment.js"></script>
     <script src="/javascripts/socket.io.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
     <header>
         <% include partials/header %>
     </header>
@@ -20,7 +21,7 @@
       <div class="col-md-10 right-col">
         <div id="conversations" class="canvas" data-bind="visible: chosenViewId() === 'Conversations'">
           <div class="conversations-view">
-            <div class="ongoing" data-bind="foreach: conversationList.sort(function(l, r){return l.createdAt < r.createdAt ? 1 : -1})">
+            <div class="ongoingc" data-bind="foreach: conversationList.sort(function(l, r){return l.createdAt < r.createdAt ? 1 : -1})">
               <!-- ko if: conversation.status == 'ongoing' -->
                   <div class="conv-tab" data-bind="click: $root.gotoChat.bind($data, conversation._id)">
                     <input type="hidden" data-bind="">
@@ -32,7 +33,7 @@
                   </div>
               <!-- /ko -->
             </div>
-            <div class="open" data-bind="foreach: conversationList.sort(function(l, r){return l.createdAt < r.createdAt ? -1 : 1})">
+            <div class="openc" data-bind="foreach: conversationList.sort(function(l, r){return l.createdAt < r.createdAt ? -1 : 1})">
               <!-- ko if: conversation.status == 'open' -->
                   <div class="conv-tab" data-bind="click: $root.gotoChat.bind($data, conversation._id)">
                     <input type="hidden" data-bind="">
@@ -49,46 +50,140 @@
             <div class="chat-view">
               <div data-bind="foreach: messageList">
                 <div class="message-details" data-bind="style: {textAlign: $root.textAlignDirection(senderType), float:$root.textAlignDirection(senderType) }">
-                  <div>
-                    <div class="message-sender">
-                      <p data-bind="text: senderName"></p>
+                    <div>
+                      <div class="message-sender">
+                        <p data-bind="text: senderName"></p>
+                      </div>
+                      <div class="message-body">
+                        <p data-bind="text: body"></p>
+                      </div>
+                      <div class="message-time">
+                        <p data-bind="text: $root.timeSinceLast(sentAt)"></p>
+                      </div>
                     </div>
-                    <div class="message-body">
-                      <p data-bind="text: body"></p>
-                    </div>
-                    <div class="message-time">
-                      <p data-bind="text: $root.timeSinceLast(sentAt)"></p>
+                  </div>
+              </div>
+            </div>
+
+            <div class="new-message" data-bind="visible: $root.currentConversationId">
+              <div class="col-md-10">
+                <textarea class="text-area" data-bind="textInput: messageToSend"></textarea>
+              </div>
+              <div class="col-md-2">
+                <button class="message-options" data-bind="click: sendButtonHandler">Send</button>
+                <button class="message-options" data-bind="click: function(){showDialog1(true)}">Pre Messages</button>
+                <button class="message-options" data-bind="click: function(){if(confirm('This will end the current conversation. Proceed?')){endChatHandler()}}">End Chat</button>
+
+                <div class="modal fade" tabindex="-1" role="dialog" data-bind="modal:showDialog1">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Prepared Messages</h4>
+                      </div>
+                      <div class="modal-body">
+                        <div data-bind="foreach: preparedMessages">
+                          <div data-bind="click: function(){$root.usedPreparedMessage($data); $root.messageToSend($data.body); $root.showDialog1(false);}">
+                            <h3 data-bind="text: body"></h3>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+
               </div>
-            </div>
-            <div class="new-message">
-              <textarea class="text-area" data-bind="textInput: messageToSend"></textarea>
-              <button data-bind="click: sendButtonHandler">Send</button>
             </div>
           </div>
         </div>
         <div id="history" class="canvas" data-bind="visible: chosenViewId() === 'History'">
-        </div>
-        <div id="operators" class="canvas" data-bind="visible: chosenViewId() === 'Operators'">
-          <div class="operators" data-bind="foreach: operatorsList">
-            <div class="">
-              <input type="hidden" data-bind="">
-              <h3 data-bind="text: profile.firstName + ' ' + profile.lastName"></h3>
-              <div class="">
-                <p class="" data-bind="text: status"></p>
+          <div class="conversations-view">
+            <div class="ongoingc" data-bind="foreach: conversationHistoryList.sort(function(l, r){return l.createdAt < r.createdAt ? 1 : -1})">
+              <div class="conv-tab" data-bind="click: $root.gotoChat.bind($data, conversation._id)">
+                <input type="hidden" data-bind="">
+                <h3 data-bind="text: conversation.customer.profile.firstName + ' ' + conversation.customer.profile.lastName"></h3>
+                <div class="conversation-details">
+                  <p class="conversation-body" data-bind="text: body"></p>
+                  <p class="conversation-time" data-bind="text: $root.timeSinceLast(createdAt)"></p>
+                </div>
               </div>
             </div>
           </div>
+          <div class="messages-view">
+            <div class="chat-view">
+              <div data-bind="foreach: messageList">
+                <div class="message-details" data-bind="style: {textAlign: $root.textAlignDirection(senderType), float:$root.textAlignDirection(senderType) }">
+                    <div>
+                      <div class="message-sender">
+                        <p data-bind="text: senderName"></p>
+                      </div>
+                      <div class="message-body">
+                        <p data-bind="text: body"></p>
+                      </div>
+                      <div class="message-time">
+                        <p data-bind="text: $root.timeSinceLast(sentAt)"></p>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <div data-bind="visible: $root.currentConversationId">
+              <button>Email Conversation</button>
+            </div>
+          </div>
+        
+        </div>
+        <div id="operators" class="canvas" data-bind="visible: chosenViewId() === 'Operators'">
+          <div data-bind="if: operatorList().length == 0">There aren't any Operators. Please add an operator using fields at the bottom.</div>
+          <div class="operators" data-bind="foreach: operatorList">
+            <div class="operator-row">
+              <input type="hidden" data-bind="">
+              <span>
+                <h3 data-bind="text: profile.firstName + ' ' + profile.lastName"></h3>
+                <img data-bind="attr:{'src':$root.operatorStatusImage(status())}" src="" alt="online/offline">
+              </span>
+            </div>
+          </div>
+          <% if(user && user.email != null && user.role == 'Admin') {%>
           <div class="add-operator">
             <input type="text" placeholder="First Name" data-bind="value: operator_fname">
             <input type="text" placeholder="Last Name" data-bind="value: operator_lname">
             <input type="text" placeholder="Email" data-bind="value: operator_email">
             <input type="button" value="Create Operator"  data-bind="click: operator_addNew">
           </div>
+          <% } %>
         </div>
         <div id="prepared-messages" class="canvas" data-bind="visible: chosenViewId() === 'Prepared Messages'">
+          <div>
+            <div data-bind="foreach: preparedMessages">
+              <div>
+                <p data-bind="text: body"></p>
+                <button data-bind="click: function(){showDialog(true); $root}">Update</button>
+                <button>Delete</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="modal fade" tabindex="-1" role="dialog" data-bind="modal:showDialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Prepared Message</h4>
+                      </div>
+                      <div class="modal-body">
+                        <label for="message-body">Message Body</label>
+                        <textarea name="message-body" id="message-body" data-bind="value: createdPreparedMessage" cols="65" rows="10"></textarea>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-primary btn-xs" data-bind="click : submitCreatePreparedMessage">Submit</button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+            <button data-bind="click: function(){showDialog(true)}">Add Prepared Message</button>
+          </div>
         </div>
       </div>
     </div>

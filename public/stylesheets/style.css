@@ -121,41 +121,50 @@ img {
 }
 
 .canvas{
-  display: flex;
+  display: block;
   padding: 10px;
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
 }
 
 .conversations-view{
-  width: 25%;
+  width: 24%;
   height: 100%;
-  background-color: #123;
+  background-color: #2b343e;
   position: relative;
+  min-height: 515px;
+  float: left;
 }
 
 .messages-view{
   width: 75%;
   height: 100%;
-  background-color: #12a;
+  background-color: #5165ff;
   position: relative;
+  min-height: 515px;
+  float: right;
 }
 
 .new-message{
   position: absolute;
-  bottom: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 7px;
+    background: white;
+}
+
+.new-message button.message-options{
   width: 100%;
-  padding: 10px;
+    padding: 2px;
+    margin: 5px;
 }
 
 .text-area{
-  width: 90%;
+  width: 100%;
   margin-top: 0px;
   margin-bottom: 0px;
-  height: 60px;
+  height: 76px;
   resize: none;
 }
 
@@ -166,18 +175,19 @@ img {
   margin: 0px;
 }
 
-.ongoing, .open{
+.ongoingc, .openc{
   padding: 10px;
   width: 100%;
   margin: 0px;
 }
 
-.open{
+.openc{
   position: absolute;
   bottom: 0px;
   height: 40%;
   max-height: 40%;
   overflow-y: auto;
+  background-color: #26292b;
 }
 
 .canvas h3{
@@ -212,13 +222,32 @@ img {
 
 .chat-view{
   overflow-x: hidden;
-  overflow-y: scroll;
-  height: 85%;
+    overflow-y: scroll;
+    height: 85%;
+    min-height: 425px;
+    max-height: 425px;
 }
 
 .message-details{
   width: 70%;
   background-color: white;
+  color: black;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 5px 5px rgba(255, 255, 255, 0.4) inset, 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  clear: both;
+  margin: 5px;
+  padding: 5px;
+  line-height: 20px;
+}
+
+.message-details-system{
+  text-align: center;
+    float: none;
+    margin: auto;
+    width: 30%;
+    background-color: white;
   color: black;
   border: 1px solid rgba(0, 0, 0, 0.5);
   border-radius: 10px;
@@ -242,6 +271,35 @@ img {
   font-size: 10px;
 }
 
+.operators{
+  width: 100%;
+    height: 100%;
+    min-height: 490px;
+}
+
+.add-operator{
+  position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+}
+
+.operator-row{
+  padding: 25px;
+}
+
+.operator-row h3{
+      width: 60%;
+    padding: 0px;
+    margin: 0px;
+    float: left;
+}
+
+.operator-row img{
+  max-width: 20px;
+    max-height: 20px;
+    float: right;
+}
 
 
 

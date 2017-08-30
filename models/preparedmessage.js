@@ -12,10 +12,10 @@ const PreparedMessageSchema = new Schema({
         required: true
     },
     usageCounter:{
-        kind: Number
+        type: Number
     },
     isActive:{
-        kind: Boolean,
+        type: Boolean,
         required: true,
         default: false
     },

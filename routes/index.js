@@ -18,15 +18,15 @@ router.post('/login', passport.authenticate('local-login', {
   failureFlash: true
 }));
 
-router.post('/signup', passport.authenticate('local-signup', {
-  successRedirect: '/dashboard',
-  failureRedirect: '/signup',
-  failureFlash: true
-}));
+// router.post('/signup', passport.authenticate('local-signup', {
+//   successRedirect: '/dashboard',
+//   failureRedirect: '/signup',
+//   failureFlash: true
+// }));
 
-router.get('/signup', function(req, res) {  
-  res.render('signup.ejs', { message: req.flash('signupMessage') });
-});
+// router.get('/signup', function(req, res) {  
+//   res.render('signup.ejs', { message: req.flash('signupMessage') });
+// });
 
 router.get('/forgot', function(req, res){
   res.render('forgotPassword.ejs', {message: req.flash('forgotPasswordMessage')});

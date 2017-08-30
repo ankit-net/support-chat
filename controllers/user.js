@@ -3,8 +3,8 @@ const crypto = require('crypto'),
     User = require('../models/user'),
     waterfall = require('async-waterfall');
 
-exports.getOperators = function(callback){
-    User.find({role:'Operator'})
+exports.getOperators = function(userId, callback){
+    User.find({$and:[{role:'Operator'},{'_id': {$ne: userId}}]})
     .select('_id profile email status')
     .sort('email')
     .exec()

@@ -9,11 +9,9 @@ exports.userAuthenticated = function(req, res, next){
     console.log('Session for authentication: ', req.session);
 
     if(req.user)
-      return next();
-   else
-      return res.status(401).json({
-        error: 'User not authenticated.'
-      });
+        return next();
+    else
+        return next(new Error('User not authenticated.'));
 };
 
 exports.userAuthorized = function(role){
@@ -21,9 +19,7 @@ exports.userAuthorized = function(role){
     console.log('Session for authorization: ', req.session);
     return function(req, res, next){
         if(role !== req.user.role){
-            return res.status(401).json({
-                error: 'User not authorized.'
-            });
+            return next(new Error('User not authorized.'));
         }else{
             return next();
         }
@@ -93,11 +89,8 @@ exports.getResetForm = function(req, res){
     User.findOne({resetPasswordToken:req.params.token})
     .exec()
     .then(function(user){
-        if(!user){
-            req.flash('loginMessage', 'Password reset token is invalid.');
-            return res.redirect('/login');
-        }if(new Date(user.resetPasswordExpires)-new Date() <= 0){
-            req.flash('loginMessage', 'Password reset token has expired.');
+        if(!user || new Date(user.resetPasswordExpires)-new Date() <= 0){
+            req.flash('loginMessage', 'Password reset token is invalid or has expired.');
             return res.redirect('/login');
         }else{
             res.render('resetPassword.ejs', {

@@ -3,19 +3,29 @@ const User = require('../models/user'),
     waterfall = require('async-waterfall');
 
 exports.createPreparedMessage = function(messageBody, userId, callback){
-    var preparedMessage = new PreparedMessage({
-        createdBy: userId,
-        body: messageBody,
-        usageCounter: 0,
-        isActive: true
-    });
-
-    preparedMessage.save(function(err, savedPreparedMessage){
-        if(err){
-            callback(false, {error: err});
+    PreparedMessage.findOne({
+        'body': messageBody
+    }).exec()
+    .then(function(message){
+        if(!message){
+            var preparedMessage = new PreparedMessage({
+                createdBy: userId,
+                body: messageBody,
+                usageCounter: 0,
+                isActive: true
+            });
+            return preparedMessage.save();
         }else{
+            callback(false, {error: 'Message with same text already exists.'});
+            return;
+        }
+    }).then(function(savedPreparedMessage){
+        if(savedPreparedMessage){
             callback(true, {savedMessage: savedPreparedMessage});
         }
+    }).catch(function(err){
+        console.log('error');
+        callback(false, {error: err});
     });
 };
 
@@ -51,10 +61,27 @@ exports.deletePreparedMessage = function(messageId, userId, callback){
     });
 }
 
-exports.updateUsageCounter = function(messageId, callback){
+exports.updateUsageCounter = function(messageId, userId, callback){
     PreparedMessage.findOne({ '_id': messageId })
     .then(function(message){
         message.usageCounter += 1;
+        message.lastUpdatedBy = userId;
+        return message.save();
+    })
+    .then(function(message){
+        callback(true, {message:'updated'});
+    })
+    .catch(function(err){
+        console.log('error');
+        callback(false, {error: err});
+    });
+}
+
+exports.updateMessageBody = function(messageId, messageBody, userId, callback){
+    PreparedMessage.findOne({ '_id': messageId })
+    .then(function(message){
+        message.body = messageBody;
+        message.lastUpdatedBy = userId;
         return message.save();
     })
     .then(function(message){

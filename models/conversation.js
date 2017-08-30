@@ -14,6 +14,10 @@ const ConversationSchema = new Schema({
         type: String,
         enum: ['open', 'ongoing', 'ended'],
         default: 'open'
+    },
+    customerEnded: {
+        type: Boolean,
+        required: false
     }
 },
 {

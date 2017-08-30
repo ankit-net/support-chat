@@ -49,5 +49,17 @@ module.exports = function(io){
         });
     });
 
+    customerRoutes.delete('/:conversationId', function(req, res, next){
+        chatController.endConversation(req.params.conversationId,
+                                        true,
+                                        function(success, data){
+            if(success){
+                res.status(200).json(data);
+            }else{
+                res.status(500).json(data);
+            }
+        });
+    });
+
     return customerRoutes;
 }

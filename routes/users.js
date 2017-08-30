@@ -10,7 +10,7 @@ router.post('/',
 
 router.get('/',
             AuthenticationController.userAuthenticated, function(req, res, next){
-                UserController.getOperators(function(success, data){
+                UserController.getOperators(req.user._id, function(success, data){
                     if(success){
                         res.status(200).json(data);
                     }else{

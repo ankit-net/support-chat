@@ -18,6 +18,27 @@ module.exports = function(io){
         });
     });
 
+    chatRoutes.get('/history/', authController.userAuthenticated, function(req, res, next){
+        chatController.getConversationsHistory(req.user._id, function(success, data){
+            if(success){
+                res.status(200).json(data);
+            }else{
+                res.status(500).json(data);
+            }
+        });
+    });
+
+    chatRoutes.post('/email/:conversationId', authController.userAuthenticated, function(req, res, next){
+        chatController.emailConversation(req.params.conversationId,
+                                        function(success, data){
+            if(success){
+                res.status(200).json(data);
+            }else{
+                res.status(500).json(data);
+            }
+        });
+    });
+
     // Retrieve single conversation
     chatRoutes.get('/:conversationId', authController.userAuthenticated, function(req, res, next){
         chatController.getMessagesForConversation(req.params.conversationId, function(success, data){
@@ -41,6 +62,18 @@ module.exports = function(io){
                 if(conversationFromOpenToOngoing){
                     io.sockets.in('operators').emit('operator claimed conversation', {conversationId: conversationId, userId: req.user._id});
                 }
+                res.status(200).json(data);
+            }else{
+                res.status(500).json(data);
+            }
+        });
+    });
+
+    chatRoutes.delete('/:conversationId', authController.userAuthenticated, function(req, res, next){
+        chatController.endConversation(req.params.conversationId,
+                                        false,
+                                        function(success, data){
+            if(success){
                 res.status(200).json(data);
             }else{
                 res.status(500).json(data);
