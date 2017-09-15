@@ -1,4 +1,3 @@
-var passport = require('passport');  
 const chatController = require('../controllers/chat'),
     authController = require('../controllers/authentication'),
     Message = require('../models/message'),
@@ -72,6 +71,7 @@ module.exports = function(io){
     chatRoutes.delete('/:conversationId', authController.userAuthenticated, function(req, res, next){
         chatController.endConversation(req.params.conversationId,
                                         false,
+                                        req.user._id,
                                         function(success, data){
             if(success){
                 res.status(200).json(data);

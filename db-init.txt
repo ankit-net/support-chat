@@ -1,0 +1,1 @@
+db.users.insertOne({ email: "niraj02.09.90+admin1@gmail.com", password: "$2a$05$e6e0DrZ72QNCy5g3O6SPGu31VtlU7T5ZTQ0YFXo1AAoiMQQ6koaGS", status: "offline", role: "Admin", profile: { firstName: "NirajAdmin1", lastName: "Kumar"}, createdAt: new Date(), updatedAt: new Date()})

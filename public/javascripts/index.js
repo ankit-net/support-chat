@@ -111,28 +111,33 @@ function DashboardViewModel(){
     self.messageToSend = ko.observable();
     self.sendButtonHandler = function(){
         console.log('current conversationId is ' + self.currentConversationId());
-        //send event using socket
-        var message = {
-            conversationId: self.currentConversationId(),
-            body: self.messageToSend(),
-            senderId: $('#userId').val(),
-            senderName: $('#userFullName').val(),
-            senderType: 'User'
-        };
-        socket.emit('new message', message);
-        self.messageToSend('');
+        if(connected){
+            var message = {
+                conversationId: self.currentConversationId(),
+                body: self.messageToSend(),
+                senderId: $('#userId').val(),
+                senderName: $('#userFullName').val(),
+                senderType: 'User'
+            };
+            socket.emit('new message', message);
+            self.messageToSend('');
 
-        if(self.usedPreparedMessage() && message.body == self.usedPreparedMessage().body){
-            $.put('/preparedMessage/'+self.usedPreparedMessage()._id+'/count')
-            .done(function(data, statusText, xhr){
-                console.log('Prepared Message count updated.');
-                console.log(JSON.stringify(data));
-            }).fail(function(xhr, statusText, error) {
-                console.log('Error in updating count.')
-                alert(xhr.responseJSON.error);
-            });
+            if(self.usedPreparedMessage() && message.body == self.usedPreparedMessage().body){
+                $.put('/preparedMessage/'+self.usedPreparedMessage()._id+'/count')
+                .done(function(data, statusText, xhr){
+                    console.log('Prepared Message count updated.');
+                    console.log(JSON.stringify(data));
+                }).fail(function(xhr, statusText, error) {
+                    console.log('Error in updating count.')
+                    alert(xhr.responseJSON.error);
+                });
+            }
+            self.usedPreparedMessage(null);
+        }else{
+            alert('Not connected.');
         }
-        self.usedPreparedMessage(null);
+        //send event using socket
+        
     }
     self.endChatHandler = function(){
         console.log('current conversationId is ' + self.currentConversationId());

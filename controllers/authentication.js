@@ -1,8 +1,7 @@
 const waterfall = require('async-waterfall'),
     crypto = require('crypto'),
     User = require('../models/user'),
-    emailController = require('./email'),
-    passport = require('passport');
+    emailController = require('./email');
 
 exports.userAuthenticated = function(req, res, next){
     console.log('Cookies for authentication: ', req.cookies);

@@ -129,7 +129,7 @@ exports.getConversationsHistory = function(operatorId, callback){
     });
 };
 
-exports.endConversation = function(conversationId, customerEndedConv, callback){
+exports.endConversation = function(conversationId, customerEndedConv, operatorId, callback){
     Conversation.findOne({_id: conversationId})
     .exec()
     .then(function(conversation){
@@ -140,6 +140,9 @@ exports.endConversation = function(conversationId, customerEndedConv, callback){
             callback(false, {error: 'Conversation already ended.'});
             return;
         }else{
+            if(conversation.status == 'open' && customerEndedConv == false && operatorId){
+                conversation.participant = operatorId;
+            }
             conversation.status = 'ended';
             conversation.customerEnded = customerEndedConv;
             return conversation.save();
