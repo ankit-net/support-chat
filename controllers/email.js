@@ -12,8 +12,8 @@ exports.sendEmail = function(emailDetails, callback){
     var client = nodemailer.createTransport(sendOptions);
 
     client.sendMail(emailDetails, function(err, info){
-        if (err ){
-            console.log(error);
+        if (err){
+            console.log(err);
         }
         else {
             console.log('Message sent: ' + info.response);

@@ -2,11 +2,19 @@ const customerController = require('../controllers/customer'),
     chatController = require('../controllers/chat');
 
 module.exports = function(io){
+    var passport = require('passport');
     var express = require('express');
     var customerRoutes = express.Router();
 
     // customerRoutes.get('/', authController.userAuthenticated, chatController.getConversations);
-    customerRoutes.post('/', function(req, res, next){
+    customerRoutes.post('/', passport.authenticate('local-login', {
+        successRedirect:'/dashboard',
+        failureRedirect:'/login',
+        failureFlash: true
+        }), function(req, res, next){
+        console.log('Cookies for authentication: ', req.cookies);
+        console.log('Session for authentication: ', req.session);
+        var session = req.session;
         customerController.createCustomerAndStartConversation(req.body.email, 
                                                             req.body.phone, 
                                                             req.body.firstName, 
@@ -17,6 +25,7 @@ module.exports = function(io){
                 if(isNewConversation){
                     io.sockets.in('operators').emit('new conversation', firstMessage);
                 }
+                session.email = req.body.email;
                 res.status(200).json(data);
             }else{
                 res.status(500).json(data);
@@ -52,6 +61,7 @@ module.exports = function(io){
     customerRoutes.delete('/:conversationId', function(req, res, next){
         chatController.endConversation(req.params.conversationId,
                                         true,
+                                        null,
                                         function(success, data){
             if(success){
                 res.status(200).json(data);
